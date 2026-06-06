@@ -6,9 +6,7 @@ const channels = ['msedge', 'chrome', 'chrome-beta'];
 async function launch() {
   for (const channel of channels) {
     try {
-      const browser = await chromium.launch({ channel });
-      console.log('Navegador:', channel);
-      return browser;
+      return await chromium.launch({ channel });
     } catch {
       /* siguiente */
     }
@@ -22,39 +20,53 @@ if (!browser) {
   process.exit(2);
 }
 
-const page = await browser.newPage();
-const consoleErrors = [];
-page.on('console', (m) => {
-  if (m.type() !== 'error') return;
-  if (/favicon|Failed to load resource/i.test(m.text())) return;
-  consoleErrors.push(m.text());
-});
-page.on('pageerror', (e) => consoleErrors.push('PAGEERROR: ' + e.message));
-
 let ok = true;
-const routes = ['#/mapa', '#/flashcards', '#/quiz', '#/prompts', '#/novedades', '#/glosario', '#/progreso', '#/errores', '#/config', '#/level/1'];
+const errors = [];
+
+// 1) Onboarding: con storage limpio debe mostrar la landing y llegar al test.
+const ctx1 = await browser.newContext();
+const p1 = await ctx1.newPage();
+p1.on('pageerror', (e) => errors.push('PAGEERROR: ' + e.message));
+await p1.goto(URL, { waitUntil: 'networkidle' });
+await p1.waitForTimeout(400);
+const landing = (await p1.textContent('body')) || '';
+const landingOk = landing.includes('Vuélvete experto');
+console.log(`Landing/onboarding visible: ${landingOk ? 'OK' : 'NO'}`);
+if (!landingOk) ok = false;
+await p1.getByRole('button', { name: /mide mi nivel/i }).click().catch(() => {});
+await p1.waitForTimeout(300);
+await p1.getByRole('button', { name: /Comenzar test de nivel/i }).click().catch(() => {});
+await p1.waitForTimeout(400);
+const quizOk = (await p1.textContent('body'))?.includes('Pregunta 1 de 10');
+console.log(`Test de nivel arranca (Pregunta 1 de 10): ${quizOk ? 'OK' : 'NO'}`);
+if (!quizOk) ok = false;
+await p1.screenshot({ path: 'scripts/smoke-landing.png' });
+await ctx1.close();
+
+// 2) Rutas internas: sembramos un perfil ya "onboarded" para saltar la landing.
+const ctx2 = await browser.newContext();
+const p2 = await ctx2.newPage();
+p2.on('console', (m) => { if (m.type() === 'error' && !/favicon|Failed to load resource/i.test(m.text())) errors.push(m.text()); });
+p2.on('pageerror', (e) => errors.push('PAGEERROR: ' + e.message));
+await p2.addInitScript(() => {
+  localStorage.setItem('ia-academy:profile:v1', JSON.stringify({
+    version: 1, createdAt: new Date().toISOString(), name: 'Test', onboarded: true, placementLevel: 3,
+    xp: 0, attempts: [], sessions: [], seenQuestionIds: [], flashcards: {},
+    streak: { current: 0, best: 0, lastActiveDay: null }, settings: { reducedMotion: false, dailyGoal: 15 },
+  }));
+});
+const routes = ['#/mapa', '#/flashcards', '#/quiz', '#/prompts', '#/novedades', '#/glosario', '#/progreso', '#/errores', '#/config', '#/level/3'];
 for (const route of routes) {
-  await page.goto(URL + route, { waitUntil: 'networkidle' });
-  await page.waitForTimeout(300);
-  const body = (await page.textContent('body')) || '';
+  await p2.goto(URL + route, { waitUntil: 'networkidle' });
+  await p2.waitForTimeout(300);
+  const body = (await p2.textContent('body')) || '';
   const mounted = body.includes('IA Academy');
   console.log(`${route.padEnd(14)} → ${mounted ? 'render OK' : 'VACÍO'} (${body.length} chars)`);
   if (!mounted) ok = false;
 }
-
-// Flujo: iniciar Nivel 1 y responder la primera.
-await page.goto(URL + '#/level/1', { waitUntil: 'networkidle' });
-await page.getByRole('button', { name: /Empezar nivel/i }).click().catch(() => {});
-await page.waitForTimeout(400);
-const hasQ = (await page.textContent('body'))?.includes('Pregunta 1');
-console.log('Nivel 1 inicia y muestra Pregunta 1:', hasQ ? 'OK' : 'NO');
-if (!hasQ) ok = false;
-
-await page.goto(URL + '#/mapa', { waitUntil: 'networkidle' });
-await page.waitForTimeout(400);
-await page.screenshot({ path: 'scripts/smoke-mapa.png', fullPage: true });
+await ctx2.close();
 
 await browser.close();
-if (consoleErrors.length) console.error('\nErrores de consola:\n' + consoleErrors.slice(0, 10).join('\n'));
-console.log(ok && consoleErrors.length === 0 ? '\n✅ Smoke test OK' : '\n⚠️ Revisar arriba');
-process.exit(ok && consoleErrors.length === 0 ? 0 : 1);
+if (errors.length) console.error('\nErrores:\n' + errors.slice(0, 10).join('\n'));
+console.log(ok && errors.length === 0 ? '\n✅ Smoke test OK' : '\n⚠️ Revisar arriba');
+process.exit(ok && errors.length === 0 ? 0 : 1);

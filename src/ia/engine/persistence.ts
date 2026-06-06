@@ -10,6 +10,8 @@ export function defaultProfile(): Profile {
     version: 1,
     createdAt: new Date().toISOString(),
     name: 'Aprendiz',
+    onboarded: false,
+    placementLevel: 1,
     xp: 0,
     attempts: [],
     sessions: [],

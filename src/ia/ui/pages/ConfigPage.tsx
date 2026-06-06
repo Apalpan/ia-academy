@@ -1,12 +1,12 @@
 import { useState } from 'react';
-import { Save, Trash2 } from 'lucide-react';
+import { RotateCcw, Save, Trash2 } from 'lucide-react';
 import { useProfile } from '../../state';
 import { bankStats } from '../../engine/questionBank';
 import { GLOSSARY } from '../../glossary';
 import { Button, Panel, SectionTitle } from '../components';
 
 export function ConfigPage() {
-  const { profile, setName, setSettings, reset } = useProfile();
+  const { profile, setName, setSettings, reset, restartOnboarding } = useProfile();
   const [name, setLocalName] = useState(profile.name);
   const [saved, setSaved] = useState(false);
   const stats = bankStats();
@@ -29,8 +29,10 @@ export function ConfigPage() {
             <input value={name} onChange={(e) => setLocalName(e.target.value)} className="rounded-xl border border-slate-700 bg-slate-950/60 px-3 py-2.5 font-bold text-slate-100 outline-none focus:border-violet-400" />
           </label>
           <Button onClick={save}><Save size={16} /> Guardar</Button>
+          <Button variant="ghost" onClick={restartOnboarding}><RotateCcw size={16} /> Rehacer test de nivel</Button>
           {saved && <span className="self-center text-sm font-bold text-emerald-300">Guardado ✓</span>}
         </div>
+        <p className="mt-2 text-xs text-slate-500">Nivel de colocación actual: {profile.placementLevel}/10.</p>
       </Panel>
 
       <Panel>

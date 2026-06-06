@@ -10,6 +10,7 @@ import { CONCEPTS, getConcept } from '../src/ia/concepts';
 import { LEARNING_PROMPTS } from '../src/ia/data/prompts';
 import { TRENDS } from '../src/ia/data/novedades';
 import { buildQueue, newCard, review } from '../src/ia/engine/srs';
+import { buildPlacement, scorePlacement } from '../src/ia/engine/placement';
 import type { Attempt, LevelId } from '../src/ia/types';
 
 let errors = 0;
@@ -66,7 +67,21 @@ const card = review(newCard('Token'), 'good');
 if (card.intervalDays < 1) fail('SRS: intervalo tras "good" debe ser >= 1 día');
 if (buildQueue({}, 1).length === 0) fail('SRS: cola de nivel 1 vacía');
 
+// Test de nivel (onboarding).
+const placementQs = buildPlacement();
+if (placementQs.length !== 10) fail(`buildPlacement debe dar 10 preguntas (dio ${placementQs.length})`);
+const allRight = placementQs.map((q, i) => ({
+  id: `p${i}`, questionId: q.id, level: q.level, topic: q.topic, tipo: q.tipo, concepto: q.concepto,
+  selected: q.respuestaCorrecta, correct: true, responseMs: 5000, targetMs: q.tiempoObjetivoSeg * 1000,
+  source: 'diagnostic' as const, at: new Date().toISOString(),
+}));
+const placed = scorePlacement(allRight);
+if (placed.placementLevel < 8) fail(`Con 10/10 el placement debería ser alto (fue ${placed.placementLevel})`);
+const placedZero = scorePlacement(allRight.map((a) => ({ ...a, correct: false })));
+if (placedZero.placementLevel !== 1) fail(`Con 0 aciertos el placement debe ser 1 (fue ${placedZero.placementLevel})`);
+
 const stats = bankStats();
+console.log(`Onboarding: 10 preguntas · placement 10/10 → nivel ${placed.placementLevel} (${placed.tier})`);
 console.log(`Conceptos: ${CONCEPTS.length} · Prompts: ${LEARNING_PROMPTS.length} · Novedades: ${TRENDS.length}`);
 console.log(`Banco: ${stats.total} ejercicios · niveles=${JSON.stringify(stats.byLevel)}`);
 console.log(`Glosario: ${GLOSSARY.length} términos · Niveles: ${LEVELS.length}`);

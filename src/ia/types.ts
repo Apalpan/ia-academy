@@ -65,13 +65,14 @@ export interface GlossaryTerm {
 // Intentos, sesiones y progreso
 // ---------------------------------------------------------------------------
 
-export type SessionKind = 'practice' | 'level' | 'quiz' | 'review';
+export type SessionKind = 'practice' | 'level' | 'quiz' | 'review' | 'diagnostic';
 
 export const sessionKindLabels: Record<SessionKind, string> = {
   practice: 'Práctica',
   level: 'Reto de nivel',
   quiz: 'Quiz mixto',
   review: 'Repaso de errores',
+  diagnostic: 'Test de nivel',
 };
 
 export interface Attempt {
@@ -149,6 +150,8 @@ export interface Profile {
   version: number;
   createdAt: string;
   name: string;
+  onboarded: boolean;
+  placementLevel: LevelId; // nivel medido en el test inicial (desbloquea hasta aquí)
   xp: number;
   attempts: Attempt[];
   sessions: SessionResult[];

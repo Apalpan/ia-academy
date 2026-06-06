@@ -17,6 +17,7 @@ export function computeProgress(profile: Profile): ProgressSnapshot {
   const totalCorrect = attempts.filter((a) => a.correct).length;
   const globalAccuracy = totalAttempts ? round((totalCorrect / totalAttempts) * 100) : 0;
 
+  const placement = profile.placementLevel ?? 1;
   const levels: LevelProgress[] = [];
   let unlockedLevel: LevelId = 1;
   let prevPassed = true; // nivel 1 siempre desbloqueado
@@ -29,7 +30,8 @@ export function computeProgress(profile: Profile): ProgressSnapshot {
     const volume = clamp((rows.length / 6) * 100);
     const mastery = round(clamp(0.7 * accuracy + 0.3 * volume));
     const passed = bestAccuracy >= PASS_THRESHOLD && rows.length >= MIN_ATTEMPTS_TO_PASS;
-    const unlocked = def.id === 1 || prevPassed;
+    // Desbloqueado si: es el nivel 1, ya superaste el anterior, o el test de nivel te colocó aquí.
+    const unlocked = def.id === 1 || prevPassed || def.id <= placement;
     if (unlocked) unlockedLevel = def.id;
 
     levels.push({
@@ -45,8 +47,11 @@ export function computeProgress(profile: Profile): ProgressSnapshot {
     prevPassed = passed;
   }
 
-  // Nivel sugerido: el primer desbloqueado aún no superado.
-  const current = levels.find((l) => l.unlocked && !l.passed)?.level ?? unlockedLevel;
+  // Nivel sugerido: el primer no superado desde tu nivel de colocación; si no, el primero pendiente.
+  const current =
+    levels.find((l) => l.unlocked && !l.passed && l.level >= placement)?.level ??
+    levels.find((l) => l.unlocked && !l.passed)?.level ??
+    unlockedLevel;
 
   // Conceptos débiles: errores agrupados por concepto.
   const failMap = new Map<string, { fails: number; level: LevelId }>();

@@ -1,6 +1,7 @@
 import { Suspense, lazy } from 'react';
-import { ProfileProvider } from './state';
+import { ProfileProvider, useProfile } from './state';
 import { AppShell } from './ui/AppShell';
+import { Onboarding } from './ui/Onboarding';
 import { useRoute } from './ui/router';
 import { MapaPage } from './ui/pages/MapaPage';
 import { LevelPage } from './ui/pages/LevelPage';
@@ -51,10 +52,16 @@ function Routed() {
   );
 }
 
+function Gate() {
+  const { profile } = useProfile();
+  if (!profile.onboarded) return <Onboarding />;
+  return <Routed />;
+}
+
 export default function IaApp() {
   return (
     <ProfileProvider>
-      <Routed />
+      <Gate />
     </ProfileProvider>
   );
 }

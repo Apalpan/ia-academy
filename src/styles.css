@@ -72,6 +72,29 @@ button:disabled {
   animation: rise 260ms ease both;
 }
 
+@keyframes float {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-22px) scale(1.06); }
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes ring-in {
+  from { opacity: 0; transform: scale(0.85); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.animate-float { animation: float 8s ease-in-out infinite; }
+.fade-up { animation: fade-up 0.6s ease both; }
+.fade-up-1 { animation: fade-up 0.6s ease 0.12s both; }
+.fade-up-2 { animation: fade-up 0.6s ease 0.24s both; }
+.fade-up-3 { animation: fade-up 0.6s ease 0.36s both; }
+.fade-up-4 { animation: fade-up 0.6s ease 0.48s both; }
+.ring-in { animation: ring-in 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+
 .choice-rise:nth-child(1) { animation: rise 240ms ease both; }
 .choice-rise:nth-child(2) { animation: rise 240ms ease 50ms both; }
 .choice-rise:nth-child(3) { animation: rise 240ms ease 100ms both; }
@@ -80,7 +103,14 @@ button:disabled {
 @media (prefers-reduced-motion: reduce) {
   .animate-pop,
   .animate-rise,
-  .choice-rise {
+  .choice-rise,
+  .animate-float,
+  .fade-up,
+  .fade-up-1,
+  .fade-up-2,
+  .fade-up-3,
+  .fade-up-4,
+  .ring-in {
     animation: none;
   }
 }
