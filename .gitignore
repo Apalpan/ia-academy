@@ -1,0 +1,9 @@
+node_modules
+dist
+.netlify
+.env
+.env.local
+npm-debug.log*
+*.png
+*.zip
+scripts/.validate.mjs
