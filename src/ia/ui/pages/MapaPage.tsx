@@ -1,5 +1,6 @@
-import { ArrowRight, Check, Lock, Play } from 'lucide-react';
+import { ArrowRight, Check, Layers, Lock, Play, Shuffle } from 'lucide-react';
 import { LEVELS } from '../../levels';
+import { dueCount } from '../../engine/srs';
 import { useProfile } from '../../state';
 import { Bar, Button, Panel, ProgressRing, resolveIcon } from '../components';
 import { navigate } from '../router';
@@ -8,6 +9,7 @@ export function MapaPage() {
   const { profile, snapshot } = useProfile();
   const passedCount = snapshot.levels.filter((l) => l.passed).length;
   const overall = Math.round(snapshot.levels.reduce((s, l) => s + l.mastery, 0) / snapshot.levels.length);
+  const due = dueCount(profile.flashcards);
 
   return (
     <div className="grid gap-5">
@@ -33,6 +35,22 @@ export function MapaPage() {
               <p className="font-display text-4xl font-black text-white">{passedCount}<span className="text-lg text-slate-500">/10</span></p>
               <p className="text-[11px] font-black uppercase tracking-[0.14em] text-slate-400">niveles superados</p>
             </div>
+          </div>
+        </div>
+      </Panel>
+
+      <Panel>
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="text-[11px] font-black uppercase tracking-[0.2em] text-violet-400">Reto del día</p>
+            <h2 className="font-display text-xl font-black text-slate-100">Tu rutina para volverte experto</h2>
+            <p className="mt-1 text-sm text-slate-400">
+              {due > 0 ? `${due} flashcard${due === 1 ? '' : 's'} te esperan` : 'Sin flashcards pendientes hoy'} · racha de {profile.streak.current} día{profile.streak.current === 1 ? '' : 's'} · {snapshot.xp} XP
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Button variant="ghost" onClick={() => navigate('#/flashcards')}><Layers size={16} /> Flashcards{due > 0 ? ` (${due})` : ''}</Button>
+            <Button onClick={() => navigate('#/quiz')}><Shuffle size={16} /> Quiz de hoy</Button>
           </div>
         </div>
       </Panel>

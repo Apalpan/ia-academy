@@ -84,3 +84,11 @@ button:disabled {
     animation: none;
   }
 }
+
+/* Toggle manual "reducir animaciones" (Configuración). */
+.no-motion *,
+.no-motion *::before,
+.no-motion *::after {
+  animation: none !important;
+  transition: none !important;
+}

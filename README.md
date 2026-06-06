@@ -25,12 +25,14 @@ XP/rachas y mapa de dominio. Pensada para maximizar el aprendizaje paso a paso.
 ## Funcionalidades
 
 - **Mapa de niveles** gamificado: superas un nivel con ≥70% para desbloquear el siguiente.
-- **Práctica por nivel** con feedback inmediato, explicación, concepto clave y tip práctico.
-- **Quiz mixto** entre tus niveles desbloqueados.
-- **Glosario** buscable y filtrable por nivel.
-- **Progreso**: XP, rango, dominio por nivel y conceptos a reforzar.
-- **Repaso de errores**: reintenta lo que fallaste.
-- Variedad de ejercicios: definición, término, aplicación, herramienta, V/F, "detecta el error".
+- **Reto del día**: rutina diaria (flashcards + quiz) para volverte experto con uso constante.
+- **Flashcards con repetición espaciada (SM-2)**: cada concepto trae explicación, **analogía**, criterio clave, **buena práctica** y **dato curioso**.
+- **Práctica por nivel** con feedback inmediato; cada respuesta enseña explicación + analogía + cuándo aplica + dato.
+- **Prompts de aprendizaje al extremo**: biblioteca de meta-prompts (Feynman, active recall, primeros principios, debate socrático) con copiar.
+- **Novedades / Tendencias IA**: digest curado con "por qué importa" y "qué hacer" (pensamiento crítico).
+- **Quiz mixto**, **Glosario** buscable, **Progreso** (XP/rango/dominio) y **Repaso de errores**.
+- Ejercicios variados: definición, término, aplicación, herramienta, V/F, "detecta el error".
+- Optimización: rutas con lazy-load y respeto a "reducir animaciones".
 
 ## Stack
 

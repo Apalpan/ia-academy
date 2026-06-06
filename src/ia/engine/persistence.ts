@@ -1,4 +1,5 @@
-import type { Profile, SessionResult, Settings } from '../types';
+import type { CardGrade, Profile, SessionResult, Settings } from '../types';
+import { newCard, review } from './srs';
 
 const KEY = 'ia-academy:profile:v1';
 
@@ -13,6 +14,7 @@ export function defaultProfile(): Profile {
     attempts: [],
     sessions: [],
     seenQuestionIds: [],
+    flashcards: {},
     streak: { current: 0, best: 0, lastActiveDay: null },
     settings: { ...defaultSettings },
   };
@@ -26,6 +28,7 @@ export function loadProfile(): Profile {
     return {
       ...defaultProfile(),
       ...parsed,
+      flashcards: parsed.flashcards ?? {},
       settings: { ...defaultSettings, ...(parsed.settings ?? {}) },
       streak: { ...defaultProfile().streak, ...(parsed.streak ?? {}) },
     } as Profile;
@@ -72,4 +75,11 @@ export function recordSession(profile: Profile, session: SessionResult): Profile
 
 export function updateSettings(profile: Profile, patch: Partial<Settings>): Profile {
   return { ...profile, settings: { ...profile.settings, ...patch } };
+}
+
+export function recordCardReview(profile: Profile, termino: string, grade: CardGrade): Profile {
+  const existing = profile.flashcards[termino] ?? newCard(termino);
+  const updated = review(existing, grade);
+  const next: Profile = { ...profile, flashcards: { ...profile.flashcards, [termino]: updated } };
+  return registerActivity(next);
 }

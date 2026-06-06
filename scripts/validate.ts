@@ -6,6 +6,10 @@ import { bankStats, pickForLevel } from '../src/ia/engine/questionBank';
 import { summarizeSession } from '../src/ia/engine/session';
 import { computeProgress } from '../src/ia/engine/progress';
 import { defaultProfile, recordSession } from '../src/ia/engine/persistence';
+import { CONCEPTS, getConcept } from '../src/ia/concepts';
+import { LEARNING_PROMPTS } from '../src/ia/data/prompts';
+import { TRENDS } from '../src/ia/data/novedades';
+import { buildQueue, newCard, review } from '../src/ia/engine/srs';
 import type { Attempt, LevelId } from '../src/ia/types';
 
 let errors = 0;
@@ -47,7 +51,23 @@ if (!snap.levels[0].passed) fail('Nivel 1 debería estar superado con 100%');
 if (!snap.levels[1].unlocked) fail('Nivel 2 debería desbloquearse tras superar Nivel 1');
 if (snap.xp <= 0) fail('XP del perfil debe ser > 0');
 
+// Conceptos enriquecidos.
+for (const c of CONCEPTS) {
+  if (!c.explicacion || !c.analogia || !c.criterioClave || !c.buenaPractica || !c.dato) fail(`Concepto ${c.termino}: falta algún campo`);
+  if (c.level < 1 || c.level > 10) fail(`Concepto ${c.termino}: nivel inválido`);
+}
+if (!getConcept('Token')) fail('getConcept no resuelve "Token"');
+if (!LEARNING_PROMPTS.every((p) => p.prompt.includes('{tema}') || p.prompt.length > 40)) fail('Prompt sin contenido');
+if (LEARNING_PROMPTS.length < 8) fail('Faltan prompts de aprendizaje');
+if (TRENDS.length < 5) fail('Faltan novedades');
+
+// SRS: un repaso "good" agenda la tarjeta a futuro.
+const card = review(newCard('Token'), 'good');
+if (card.intervalDays < 1) fail('SRS: intervalo tras "good" debe ser >= 1 día');
+if (buildQueue({}, 1).length === 0) fail('SRS: cola de nivel 1 vacía');
+
 const stats = bankStats();
+console.log(`Conceptos: ${CONCEPTS.length} · Prompts: ${LEARNING_PROMPTS.length} · Novedades: ${TRENDS.length}`);
 console.log(`Banco: ${stats.total} ejercicios · niveles=${JSON.stringify(stats.byLevel)}`);
 console.log(`Glosario: ${GLOSSARY.length} términos · Niveles: ${LEVELS.length}`);
 console.log(`Demo: nivel 1 superado=${snap.levels[0].passed}, nivel 2 desbloqueado=${snap.levels[1].unlocked}, XP=${snap.xp}, rank=${snap.rank}`);

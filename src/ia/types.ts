@@ -133,6 +133,18 @@ export interface Settings {
   dailyGoal: number;
 }
 
+/** Estado de una flashcard (repetición espaciada, estilo SM-2). */
+export interface CardState {
+  termino: string;
+  ease: number; // factor de facilidad (≈2.5 inicial)
+  intervalDays: number;
+  due: string; // ISO de próxima revisión
+  reps: number; // repasos correctos consecutivos
+  lapses: number; // veces que se falló
+}
+
+export type CardGrade = 'again' | 'good' | 'easy';
+
 export interface Profile {
   version: number;
   createdAt: string;
@@ -141,6 +153,7 @@ export interface Profile {
   attempts: Attempt[];
   sessions: SessionResult[];
   seenQuestionIds: string[];
+  flashcards: Record<string, CardState>;
   streak: { current: number; best: number; lastActiveDay: string | null };
   settings: Settings;
 }

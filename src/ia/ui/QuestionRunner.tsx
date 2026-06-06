@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { ArrowRight, CheckCircle2, Clock, Lightbulb, Route, XCircle } from 'lucide-react';
 import type { Attempt, Choice, ChoiceKey, LevelId, Question, SessionKind } from '../types';
+import { getConcept } from '../concepts';
 import { Button, QTypeBadge } from './components';
 
 interface Props {
@@ -144,6 +145,17 @@ export function QuestionRunner({ questions, title, source, onComplete, onExit }:
                 <Lightbulb size={15} className="mt-0.5 shrink-0" /> {current.tip}
               </p>
             )}
+            {(() => {
+              const c = getConcept(current.concepto);
+              if (!c) return null;
+              return (
+                <div className="mt-3 grid gap-2 border-t border-slate-800 pt-3">
+                  <p className="text-sm leading-6 text-slate-300"><span className="font-bold text-violet-300">Analogía:</span> <span className="italic">{c.analogia}</span></p>
+                  <p className="text-sm leading-6 text-slate-300"><span className="font-bold text-sky-300">¿Cuándo aplicar?</span> {c.criterioClave}</p>
+                  <p className="text-xs leading-5 text-slate-400"><span className="font-bold text-amber-300">Dato:</span> {c.dato}</p>
+                </div>
+              );
+            })()}
           </div>
           <Button onClick={advance} className="w-full sm:w-auto sm:justify-self-end">
             {index + 1 >= total ? 'Ver resultados' : 'Siguiente'} <ArrowRight size={16} />

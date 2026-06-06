@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { AlertTriangle, BookOpen, Flame, LineChart, Map, Settings, Shuffle, Sparkles, type LucideIcon } from 'lucide-react';
+import { AlertTriangle, BookOpen, Flame, Layers, LineChart, Map, Newspaper, Settings, Shuffle, Sparkles, Wand2, type LucideIcon } from 'lucide-react';
 import { useProfile } from '../state';
 import { navigate } from './router';
 
@@ -7,7 +7,10 @@ interface NavItem { path: string; label: string; icon: LucideIcon; match?: strin
 
 const NAV: NavItem[] = [
   { path: '/mapa', label: 'Mapa de niveles', icon: Map, match: ['/mapa', '/level'] },
+  { path: '/flashcards', label: 'Flashcards', icon: Layers },
   { path: '/quiz', label: 'Quiz mixto', icon: Shuffle },
+  { path: '/prompts', label: 'Prompts', icon: Wand2 },
+  { path: '/novedades', label: 'Novedades', icon: Newspaper },
   { path: '/glosario', label: 'Glosario', icon: BookOpen },
   { path: '/progreso', label: 'Progreso', icon: LineChart },
   { path: '/errores', label: 'Errores', icon: AlertTriangle },
@@ -19,7 +22,7 @@ export function AppShell({ path, children }: { path: string; children: ReactNode
   const isActive = (item: NavItem) => (item.match ?? [item.path]).includes(path);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100">
+    <div className={`min-h-screen bg-slate-950 text-slate-100 ${profile.settings.reducedMotion ? 'no-motion' : ''}`}>
       <div className="mx-auto flex max-w-7xl flex-col lg:flex-row">
         <aside className="lg:sticky lg:top-0 lg:h-screen lg:w-64 lg:shrink-0 lg:border-r lg:border-slate-800">
           <div className="flex items-center gap-3 px-4 py-5">

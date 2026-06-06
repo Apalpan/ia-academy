@@ -32,7 +32,7 @@ page.on('console', (m) => {
 page.on('pageerror', (e) => consoleErrors.push('PAGEERROR: ' + e.message));
 
 let ok = true;
-const routes = ['#/mapa', '#/quiz', '#/glosario', '#/progreso', '#/errores', '#/config', '#/level/1'];
+const routes = ['#/mapa', '#/flashcards', '#/quiz', '#/prompts', '#/novedades', '#/glosario', '#/progreso', '#/errores', '#/config', '#/level/1'];
 for (const route of routes) {
   await page.goto(URL + route, { waitUntil: 'networkidle' });
   await page.waitForTimeout(300);
