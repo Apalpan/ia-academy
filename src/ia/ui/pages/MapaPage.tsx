@@ -2,26 +2,36 @@ import { ArrowRight, Check, Layers, Lock, Play, Shuffle } from 'lucide-react';
 import { LEVELS } from '../../levels';
 import { dueCount } from '../../engine/srs';
 import { useProfile } from '../../state';
-import { Bar, Button, Panel, ProgressRing, resolveIcon } from '../components';
+import { AIOrb } from '../AIOrb';
+import { Bar, Button, Panel, resolveIcon } from '../components';
 import { navigate } from '../router';
 
 export function MapaPage() {
   const { profile, snapshot } = useProfile();
+  const persona = profile.persona;
   const passedCount = snapshot.levels.filter((l) => l.passed).length;
   const overall = Math.round(snapshot.levels.reduce((s, l) => s + l.mastery, 0) / snapshot.levels.length);
   const due = dueCount(profile.flashcards);
 
   return (
     <div className="grid gap-5">
-      <Panel accent>
-        <div className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-center">
+      <Panel accent className="aurora overflow-hidden">
+        <div className="relative grid gap-6 lg:grid-cols-[1fr_auto] lg:items-center">
           <div>
-            <p className="text-[11px] font-black uppercase tracking-[0.2em] text-violet-300">Hola, {profile.name}</p>
-            <h1 className="font-display mt-1 text-3xl font-black text-white sm:text-4xl">Aprende IA, nivel por nivel</h1>
-            <p className="mt-2 max-w-xl text-sm leading-6 text-slate-300">
-              Del fundamento a la estrategia: terminología, conceptos y herramientas de IA y productividad.
-              Supera cada nivel con 70% para desbloquear el siguiente.
+            <p className="text-[11px] font-black uppercase tracking-[0.2em] text-violet-300">
+              Hola, {profile.name} {persona?.signEmoji ?? ''}
             </p>
+            <h1 className="font-display mt-1 text-3xl font-black text-white sm:text-4xl">
+              {persona?.archetype ? <>Eres un <span className="gradient-text">{persona.archetype.name}</span></> : 'Aprende IA, nivel por nivel'}
+            </h1>
+            <p className="mt-2 max-w-xl text-sm leading-6 text-slate-300">
+              {persona?.archetype?.desc ?? 'Del fundamento a la estrategia: supera cada nivel con 70% para desbloquear el siguiente.'}
+            </p>
+            {persona && (persona.interests.length > 0 || persona.signTraits) && (
+              <div className="mt-3 flex flex-wrap gap-1.5">
+                {persona.signTraits?.map((t) => <span key={t} className="rounded-md bg-violet-500/10 px-2 py-0.5 text-[11px] font-bold text-violet-200">{t}</span>)}
+              </div>
+            )}
             <div className="mt-5 flex flex-wrap gap-3">
               <Button onClick={() => navigate(`#/level/${snapshot.currentLevel}`)}>
                 <Play size={16} /> Continuar en Nivel {snapshot.currentLevel}
@@ -29,11 +39,13 @@ export function MapaPage() {
               <Button variant="ghost" onClick={() => navigate('#/quiz')}>Quiz mixto <ArrowRight size={16} /></Button>
             </div>
           </div>
-          <div className="flex items-center justify-center gap-6">
-            <ProgressRing value={overall} sublabel="dominio total" />
+          <div className="flex items-center justify-center gap-5">
+            <AIOrb size={128} />
             <div className="text-center">
               <p className="font-display text-4xl font-black text-white">{passedCount}<span className="text-lg text-slate-500">/10</span></p>
               <p className="text-[11px] font-black uppercase tracking-[0.14em] text-slate-400">niveles superados</p>
+              <p className="mt-2 font-display text-2xl font-black text-violet-300">{overall}%</p>
+              <p className="text-[11px] font-black uppercase tracking-[0.14em] text-slate-500">dominio total</p>
             </div>
           </div>
         </div>

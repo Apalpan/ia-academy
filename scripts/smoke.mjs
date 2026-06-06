@@ -28,19 +28,17 @@ const ctx1 = await browser.newContext();
 const p1 = await ctx1.newPage();
 p1.on('pageerror', (e) => errors.push('PAGEERROR: ' + e.message));
 await p1.goto(URL, { waitUntil: 'networkidle' });
-await p1.waitForTimeout(400);
+await p1.waitForTimeout(500);
 const landing = (await p1.textContent('body')) || '';
-const landingOk = landing.includes('Vuélvete experto');
-console.log(`Landing/onboarding visible: ${landingOk ? 'OK' : 'NO'}`);
+const landingOk = landing.includes('Domina la') && landing.includes('Inteligencia Artificial');
+console.log(`Landing visible: ${landingOk ? 'OK' : 'NO'}`);
 if (!landingOk) ok = false;
-await p1.getByRole('button', { name: /mide mi nivel/i }).click().catch(() => {});
-await p1.waitForTimeout(300);
-await p1.getByRole('button', { name: /Comenzar test de nivel/i }).click().catch(() => {});
-await p1.waitForTimeout(400);
-const quizOk = (await p1.textContent('body'))?.includes('Pregunta 1 de 10');
-console.log(`Test de nivel arranca (Pregunta 1 de 10): ${quizOk ? 'OK' : 'NO'}`);
-if (!quizOk) ok = false;
 await p1.screenshot({ path: 'scripts/smoke-landing.png' });
+await p1.getByRole('button', { name: /Conóceme a fondo/i }).click().catch(() => {});
+await p1.waitForTimeout(400);
+const wizardOk = (await p1.textContent('body'))?.includes('¿Cómo te llamas?');
+console.log(`Onboarding wizard arranca (identidad): ${wizardOk ? 'OK' : 'NO'}`);
+if (!wizardOk) ok = false;
 await ctx1.close();
 
 // 2) Rutas internas: sembramos un perfil ya "onboarded" para saltar la landing.
@@ -60,7 +58,7 @@ for (const route of routes) {
   await p2.goto(URL + route, { waitUntil: 'networkidle' });
   await p2.waitForTimeout(300);
   const body = (await p2.textContent('body')) || '';
-  const mounted = body.includes('IA Academy');
+  const mounted = body.includes('AI Academy');
   console.log(`${route.padEnd(14)} → ${mounted ? 'render OK' : 'VACÍO'} (${body.length} chars)`);
   if (!mounted) ok = false;
 }

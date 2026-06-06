@@ -11,6 +11,7 @@ import { LEARNING_PROMPTS } from '../src/ia/data/prompts';
 import { TRENDS } from '../src/ia/data/novedades';
 import { buildQueue, newCard, review } from '../src/ia/engine/srs';
 import { buildPlacement, scorePlacement } from '../src/ia/engine/placement';
+import { computeArchetype, estimatePlacement, signFromDate } from '../src/ia/persona';
 import type { Attempt, LevelId } from '../src/ia/types';
 
 let errors = 0;
@@ -80,7 +81,17 @@ if (placed.placementLevel < 8) fail(`Con 10/10 el placement debería ser alto (f
 const placedZero = scorePlacement(allRight.map((a) => ({ ...a, correct: false })));
 if (placedZero.placementLevel !== 1) fail(`Con 0 aciertos el placement debe ser 1 (fue ${placedZero.placementLevel})`);
 
+// Persona: zodiaco + arquetipo + estimación.
+const virgo = signFromDate('1996-09-15');
+if (!virgo || virgo.sign !== 'Virgo' || virgo.traits.length !== 3) fail('signFromDate no resuelve Virgo con 3 rasgos');
+const cap = signFromDate('2000-01-05');
+if (!cap || cap.sign !== 'Capricornio') fail('signFromDate no maneja Capricornio (cruce de año)');
+const arch = computeArchetype({ goal: 'crear', interests: ['agentes', 'automatizacion'], hard: 60, role: 'dev' });
+if (arch.id !== 'constructor') fail(`arquetipo esperado constructor, fue ${arch.id}`);
+if (estimatePlacement({ hard: 85, interests: ['rag', 'agentes'] }) < 6) fail('estimatePlacement debería ser alto con hard 85');
+
 const stats = bankStats();
+console.log(`Persona: signo(15-sep)=${virgo?.sign} · arquetipo demo=${arch.name} ${arch.emoji}`);
 console.log(`Onboarding: 10 preguntas · placement 10/10 → nivel ${placed.placementLevel} (${placed.tier})`);
 console.log(`Conceptos: ${CONCEPTS.length} · Prompts: ${LEARNING_PROMPTS.length} · Novedades: ${TRENDS.length}`);
 console.log(`Banco: ${stats.total} ejercicios · niveles=${JSON.stringify(stats.byLevel)}`);

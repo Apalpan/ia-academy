@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { AlertTriangle, BookOpen, Flame, Layers, LineChart, Map, Newspaper, Settings, Shuffle, Sparkles, Wand2, type LucideIcon } from 'lucide-react';
 import { useProfile } from '../state';
+import { AIOrb } from './AIOrb';
 import { navigate } from './router';
 
 interface NavItem { path: string; label: string; icon: LucideIcon; match?: string[]; }
@@ -26,9 +27,9 @@ export function AppShell({ path, children }: { path: string; children: ReactNode
       <div className="mx-auto flex max-w-7xl flex-col lg:flex-row">
         <aside className="lg:sticky lg:top-0 lg:h-screen lg:w-64 lg:shrink-0 lg:border-r lg:border-slate-800">
           <div className="flex items-center gap-3 px-4 py-5">
-            <div className="grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-violet-500 to-fuchsia-500 font-display text-sm font-black shadow-[0_0_28px_rgba(139,92,246,0.5)]">IA</div>
+            <AIOrb size={40} />
             <div>
-              <p className="font-display text-base font-black leading-none">IA Academy</p>
+              <p className="font-display text-base font-black leading-none">AI Academy</p>
               <p className="text-[10px] font-black uppercase tracking-[0.18em] text-violet-400">Niveles 1–10</p>
             </div>
           </div>

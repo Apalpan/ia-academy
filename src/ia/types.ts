@@ -134,6 +134,36 @@ export interface Settings {
   dailyGoal: number;
 }
 
+export interface Archetype {
+  id: string;
+  name: string;
+  emoji: string;
+  desc: string;
+}
+
+/** Perfil personal capturado en el onboarding (conoce al usuario). */
+export interface Persona {
+  depth: 'rapido' | 'completo' | 'directo';
+  name: string;
+  birthdate?: string; // yyyy-mm-dd
+  age?: number;
+  sign?: string;
+  signEmoji?: string;
+  signTraits?: string[];
+  goal?: string;
+  painPoints: string[];
+  interests: string[];
+  role?: string;
+  commStyle?: string;
+  pace?: string;
+  formats: string[];
+  hard: number; // autoevaluación 0-100
+  soft: number;
+  power: number;
+  archetype?: Archetype;
+  completedAt?: string;
+}
+
 /** Estado de una flashcard (repetición espaciada, estilo SM-2). */
 export interface CardState {
   termino: string;
@@ -152,6 +182,7 @@ export interface Profile {
   name: string;
   onboarded: boolean;
   placementLevel: LevelId; // nivel medido en el test inicial (desbloquea hasta aquí)
+  persona: Persona | null;
   xp: number;
   attempts: Attempt[];
   sessions: SessionResult[];

@@ -1,8 +1,9 @@
-# IA Academy · Niveles 1–10
+# AI Academy · Tu copiloto de IA
 
 Aplicación web interactiva para **aprender Inteligencia Artificial** —terminología, conceptos y
-herramientas de productividad— del **nivel 1 al 10**, con práctica adaptativa, glosario, quizzes,
-XP/rachas y mapa de dominio. Pensada para maximizar el aprendizaje paso a paso.
+herramientas de productividad— del **nivel 1 al 10**, con **onboarding personalizado** (te conoce:
+signo, edad, dolores, intereses, skills y estilo), orbe IA animado, práctica adaptativa, flashcards
+(SRS), prompts de aprendizaje, novedades, XP/rachas y mapa de dominio.
 
 > Contenido aterrizado en la base de conocimiento de **Alejandro Palpan** (vault Obsidian
 > `AP_Knowledge_OS/05_KNOWLEDGE`: ruta de aprendizaje IA + glosario de términos).
@@ -24,7 +25,8 @@ XP/rachas y mapa de dominio. Pensada para maximizar el aprendizaje paso a paso.
 
 ## Funcionalidades
 
-- **Mapa de niveles** gamificado: superas un nivel con ≥70% para desbloquear el siguiente.
+- **Landing + onboarding con orbe IA**: 3 flujos (rápido / conóceme a fondo / entrar directo). Perfila signo+rasgos (de tu fecha), edad, objetivo, puntos de dolor, intereses, rol, estilo de comunicación, hard/soft/power skills y preferencias; calcula tu **arquetipo de aprendiz** y te coloca en el nivel correcto.
+- **Mapa de niveles** gamificado y personalizado: superas un nivel con ≥70% para desbloquear el siguiente.
 - **Reto del día**: rutina diaria (flashcards + quiz) para volverte experto con uso constante.
 - **Flashcards con repetición espaciada (SM-2)**: cada concepto trae explicación, **analogía**, criterio clave, **buena práctica** y **dato curioso**.
 - **Práctica por nivel** con feedback inmediato; cada respuesta enseña explicación + analogía + cuándo aplica + dato.

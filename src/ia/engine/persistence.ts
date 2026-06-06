@@ -12,6 +12,7 @@ export function defaultProfile(): Profile {
     name: 'Aprendiz',
     onboarded: false,
     placementLevel: 1,
+    persona: null,
     xp: 0,
     attempts: [],
     sessions: [],
